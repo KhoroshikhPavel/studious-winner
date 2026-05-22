@@ -2,4 +2,5 @@ pytelegrambotapi==4.16.1
 peewee==3.17.1
 APScheduler==3.10.4
 python-dotenv==1.0.1
+sqlalchemy==2.0.36
 python-telegram-bot-calendar

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 
@@ -21,8 +22,11 @@ def setup_logging(log_file_path: str = "logs/bot.log") -> None:
     console_handler.setLevel(logging.DEBUG)
     console_handler.setFormatter(logging.Formatter(FMT, datefmt=DATE_FMT))
 
+    log_level_str = os.getenv("LOG_LEVEL", "DEBUG").upper()
+    log_level = getattr(logging, log_level_str, logging.DEBUG)
+
     root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
+    root.setLevel(log_level)
     root.handlers.clear()
     root.addHandler(file_handler)
     root.addHandler(console_handler)

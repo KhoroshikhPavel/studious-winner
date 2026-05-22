@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from telebot import TeleBot, ExceptionHandler
 
 from bot.config import load_config
@@ -59,7 +60,12 @@ def main() -> None:
     init_models()
 
     bot = TeleBot(config.bot_token, exception_handler=BotExceptionHandler())
-    scheduler = ReminderScheduler(bot=bot, scheduler=BackgroundScheduler())
+
+    jobstores = {
+        "default": SQLAlchemyJobStore(url=f"sqlite:///{config.scheduler_db_path}")
+    }
+    bg_scheduler = BackgroundScheduler(jobstores=jobstores)
+    scheduler = ReminderScheduler(bot=bot, scheduler=bg_scheduler)
     scheduler.start()
 
     free_time_service = FreeTimeService()
@@ -70,7 +76,7 @@ def main() -> None:
     register_task_handlers(bot, task_service)
     register_group_handlers(bot, group_service)
 
-    bot.infinity_polling()
+    bot.infinity_polling(skip_pending=True)
 
 
 if __name__ == "__main__":
