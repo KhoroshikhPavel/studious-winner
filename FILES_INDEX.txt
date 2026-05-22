@@ -1,0 +1,239 @@
+ПОЛНЫЙ ИНДЕКС АНАЛИЗИРОВАННЫХ ФАЙЛОВ
+=====================================
+
+ДОКУМЕНТАЦИЯ АНАЛИЗА:
+====================
+
+1. /home/paul/code/python_telegram_bot/README_ANALYSIS.md
+   - Главный индекс и навигация по документации
+   - Быстрое резюме архитектуры
+   - Ссылки на другие документы
+
+2. /home/paul/code/python_telegram_bot/quick_reference.md
+   - Быстрая справка для разработчиков
+   - TL;DR в 2 минуты
+   - Ключевые методы и классы
+   - Проблемы и ограничения
+
+3. /home/paul/code/python_telegram_bot/visual_guide.md
+   - Визуальный гайд с примерами
+   - 6 полных примеров использования
+   - Диаграммы и хронологии
+   - Статистика проекта
+
+4. /home/paul/code/python_telegram_bot/analysis_recurring_tasks.md
+   - Полный детальный анализ (48 KB)
+   - 13 разделов анализа
+   - Диаграммы архитектуры
+   - Полный процесс создания задачи
+
+ОСНОВНОЙ КОД ПРОЕКТА:
+====================
+
+1. /home/paul/code/python_telegram_bot/bot/db/models.py
+   - Модели БД: Task, Recurrence, Reminder, User
+   - Поля и связи между таблицами
+   - 70 строк кода
+
+2. /home/paul/code/python_telegram_bot/bot/services/scheduler.py
+   - ReminderScheduler класс
+   - Методы: start(), schedule_task_reminders(), _next_occurrence(), _send_reminder()
+   - Интеграция с APScheduler
+   - 109 строк кода
+
+3. /home/paul/code/python_telegram_bot/bot/services/tasks.py
+   - TaskService класс
+   - Методы: create_task(), set_wizard_type(), set_wizard_recurrence()
+   - Логика _recurring_occurrence_on_day()
+   - 523 строк кода
+
+4. /home/paul/code/python_telegram_bot/bot/handlers/task.py
+   - Обработчики команд и callback'ов
+   - handle_task_type_callback(), handle_recurrence_callback()
+   - Интеграция с календарём
+   - 354 строк кода
+
+5. /home/paul/code/python_telegram_bot/bot/main.py
+   - Инициализация приложения
+   - Запуск ReminderScheduler
+   - Регистрация handlers
+   - 67 строк кода
+
+6. /home/paul/code/python_telegram_bot/bot/services/free_time.py
+   - FreeTimeService класс
+   - Методы: get_free_intervals(), _recurring_busy_interval()
+   - 154 строк кода
+
+7. /home/paul/code/python_telegram_bot/bot/config.py
+   - AppConfig класс
+   - Загрузка переменных окружения
+
+8. /home/paul/code/python_telegram_bot/bot/services/users.py
+   - UserService функции
+   - ensure_user(), get_user_by_telegram_id()
+
+9. /home/paul/code/python_telegram_bot/bot/utils/timezone.py
+   - Функции работы с таймзонами
+   - to_utc(), from_utc()
+
+10. /home/paul/code/python_telegram_bot/bot/utils/time_parse.py
+    - Парсинг дат и времени
+    - DATE_TIME_FORMAT, parse_datetime()
+
+КОНФИГУРАЦИЯ:
+=============
+
+/home/paul/code/python_telegram_bot/.env
+- BOT_TOKEN
+- DEFAULT_TIMEZONE
+- DATABASE_PATH
+- LOG_FILE_PATH
+
+/home/paul/code/python_telegram_bot/requirements.txt
+- pytelegrambotapi==4.16.1
+- APScheduler==3.10.4
+- peewee==3.17.1
+- python-dotenv==1.0.1
+- python-telegram-bot-calendar
+
+БД:
+===
+
+/home/paul/code/python_telegram_bot/bot.db
+- SQLite база данных
+- Таблицы: user, task, recurrence, reminder, category, group, groupmember, grouptask, taskwizardstate
+
+ЛОГИ:
+=====
+
+/home/paul/code/python_telegram_bot/logs/
+- bot.log (логирование работы бота)
+
+ДОПОЛНИТЕЛЬНЫЕ ФАЙЛЫ:
+=====================
+
+/home/paul/code/python_telegram_bot/bot/db/database.py
+- Инициализация базы данных
+- get_db() функция
+
+/home/paul/code/python_telegram_bot/bot/logging_config.py
+- Конфигурация логирования
+
+/home/paul/code/python_telegram_bot/bot/handlers/start.py
+- Обработчик команды /start
+
+/home/paul/code/python_telegram_bot/bot/handlers/group.py
+- Обработчики групповых функций
+
+/home/paul/code/python_telegram_bot/bot/services/groups.py
+- GroupService класс
+
+КЛЮЧЕВЫЕ КОНСТАНТЫ:
+===================
+
+Правила повторения (Recurrence.rule):
+- daily (каждый день)
+- weekly (каждую неделю)
+- monthly (каждый месяц)
+- every_n_days (каждые N дней)
+
+Типы задач (Task.task_type):
+- one_time (разовая задача)
+- recurring (повторяющаяся задача)
+- deadline (дедлайн с распределением времени)
+
+Формат даты-времени:
+- DATE_TIME_FORMAT = "%d.%m.%Y %H:%M"
+- Пример: "24.05.2026 18:30"
+
+Job ID формат в APScheduler:
+- f"task:{task_id}:offset:{offset}"
+- Пример: "task:1:offset:15"
+
+Формат напоминаний:
+- Целые числа, разделённые запятыми
+- Пример: "15,30,60" (за 15, 30, 60 минут)
+
+МЕТОДЫ И ФУНКЦИИ:
+==================
+
+ReminderScheduler:
+- start() ................................. Запуск планировщика
+- shutdown() .............................. Остановка планировщика
+- schedule_task_reminders() .............. Планирование напоминаний
+- remove_task_reminders() ............... Удаление jobs
+- _send_reminder() ....................... Отправка уведомления
+- reschedule_all_reminders() ............ Переопланирование при старте
+- _next_occurrence() ..................... Вычисление следующего вхождения
+
+TaskService:
+- start_task_wizard() .................... Начало мастера создания
+- set_wizard_type() ...................... Установка типа задачи
+- set_wizard_recurrence() ............... Установка правила повторения
+- set_wizard_date() ...................... Установка даты
+- handle_wizard_message() ............... Обработка ввода пользователя
+- create_task() .......................... Создание новой задачи
+- delete_task() .......................... Удаление задачи
+- list_tasks() ........................... Список задач
+- _recurring_occurrence_on_day() ........ Проверка повторения на день
+- _next_occurrence() ..................... Вычисление следующего вхождения
+
+FreeTimeService:
+- get_free_intervals() .................. Получение свободного времени
+- _recurring_busy_interval() ............ Определение занятого времени повторяющейся задачи
+
+Утилиты:
+- to_utc() ............................... Преобразование в UTC
+- from_utc() ............................. Преобразование из UTC
+- parse_datetime() ....................... Парсинг даты-времени
+- ensure_user() .......................... Получение или создание пользователя
+
+ИНФОРМАЦИЯ ДЛЯ РАЗРАБОТКИ:
+==========================
+
+Для быстрого старта:
+1. Прочитайте /home/paul/code/python_telegram_bot/README_ANALYSIS.md
+2. Смотрите /home/paul/code/python_telegram_bot/quick_reference.md для справки
+3. Используйте /home/paul/code/python_telegram_bot/visual_guide.md для примеров
+4. Читайте /home/paul/code/python_telegram_bot/analysis_recurring_tasks.md для деталей
+
+Для отладки:
+1. Проверьте /home/paul/code/python_telegram_bot/logs/bot.log
+2. Используйте sqlite3 для инспекции /home/paul/code/python_telegram_bot/bot.db
+3. Ставьте breakpoint'ы в методах ReminderScheduler и TaskService
+
+Для добавления функций:
+1. Добавьте модель в /home/paul/code/python_telegram_bot/bot/db/models.py
+2. Добавьте сервис в /home/paul/code/python_telegram_bot/bot/services/
+3. Добавьте handler в /home/paul/code/python_telegram_bot/bot/handlers/
+4. Зарегистрируйте handler в /home/paul/code/python_telegram_bot/bot/main.py
+
+СТАТИСТИКА:
+===========
+
+Документация анализа: 92 KB (4 файла)
+Основной код: 1277 строк (6 ключевых файлов)
+Таблиц в БД: 9
+Правил повторения: 4
+Типов задач: 3
+Основных сервисов: 3
+Зависимостей: 5
+
+ПРОБЛЕМЫ И РЕКОМЕНДАЦИИ:
+========================
+
+Проблема #1: Напоминания не переопланируются для повторяющихся задач
+Решение: Добавить переопланирование в _send_reminder()
+
+Проблема #2: APScheduler не персистирует jobs
+Решение: Использовать SQLAlchemy job store или кастомное решение
+
+Проблема #3: Нет управления уведомлениями
+Решение: Добавить UserNotificationSettings модель
+
+Проблема #4: Нет учёта летнего/зимнего времени
+Решение: Использовать ZoneInfo для автоматического преобразования
+
+Проблема #5: Job ID может конфликтовать при изменении напоминаний
+Решение: Удалять старые jobs перед созданием новых
+

@@ -1,0 +1,63 @@
+Project: Telegram task planner bot (python-telegram-bot)
+
+Purpose
+- Personal and group task scheduling with reminders.
+- Provide task views (by day, by category) and show free time windows.
+
+Core Concepts
+
+Task (base)
+- start_time (required)
+- end_time (optional). If missing, the task is instantaneous.
+- category (mutable over time; categories can change)
+- reminders: one or more offsets before start_time when the bot sends notifications.
+  Example default for deadlines: 3 days, 1 day, 3 hours, 1 hour, 15 minutes before.
+Task Types
+1) One-off task
+- Single occurrence, nothing special beyond base fields.
+
+2) Recurring task
+- Repeats with a given period (exact recurrence rules TBD: daily/weekly/custom interval).
+
+3) Deadline
+- Has a due time (start_time/end_time representation TBD).
+- Adds expected_work_time (how long it should take to complete).
+- If expected_work_time is large, the bot should split the work into multiple sessions.
+- Scheduling goal: distribute work sessions into the most free days (avoid packing 100 tasks into one day).
+  Constraints/heuristics for splitting and placement are TBD.
+
+User Flows / Functional Requirements
+1) Create tasks
+- Support creating: one-off, recurring, deadline.
+- Capture all base parameters + type-specific parameters.
+- Allow default reminder schedule with optional customization.
+
+2) View tasks
+- View by category.
+- View by day of week.
+- Show free time for a given day (available time windows).
+
+3) Delete tasks
+- Straightforward removal.
+
+4) User groups
+- Users can create groups and join them.
+- Groups have one or more administrators.
+- Admins can assign tasks to group members (assignment model TBD: per-user vs shared group tasks).
+- Ability to find intersection of free time for multiple users on a given day.
+
+Open Questions (need product decision)
+- Timezone handling per user/group.
+- Recurrence rule format.
+- Deadline representation: is it an instantaneous due moment or a time range?
+- How to define "free time": working hours, sleep hours, and existing tasks? (defaults TBD)
+- Algorithm for splitting/placing deadline work sessions (min/max session length, earliest start, avoidance rules).
+
+Non-Goals / Not Specified Yet
+- Persistence/storage choice (DB, file, etc.)
+- Permissions model beyond group admins.
+- UI/command set for Telegram interactions (commands, inline keyboards, etc.)
+
+Notes for contributors/agents
+- Keep changes minimal and incremental.
+- When implementing scheduling logic, document assumptions (working hours, timezones, defaults).
